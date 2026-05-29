@@ -1,3 +1,6 @@
 [build]
   command = "pip install -r requirements.txt"
   publish = "dist"  # The folder containing your final HTML files
+
+[functions]
+  directory = "netlify/functions"
