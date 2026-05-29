@@ -1,0 +1,3 @@
+[build]
+  command = "pip install -r requirements.txt && python build_script.py"
+  publish = "dist"  # The folder containing your final HTML files
