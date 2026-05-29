@@ -3,3 +3,7 @@
   publish = "dist"  # The folder containing your final HTML files
   functions = "netlify/functions"
   
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/api"
+  status = 200
