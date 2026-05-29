@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CASPA — Career ASsisted Path App</title>
+  <link rel="icon" href="/static/logo.svg" type="image/svg+xml"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<header class="hero">
+  <button class="dark-toggle" id="dark-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
+  <div class="hero-logo">
+    <img src="/static/logo.svg" alt="CASPA — Career ASsisted Path App"/>
+  </div>
+  <p class="hero-tagline">▶ DISCOVER YOUR CHILD'S CAREER PATH ◀</p>
+  <p class="hero-sub">[ 6 ML ALGORITHMS · 9,000 PROFILES · 31 CAREERS ]</p>
+</header>
+
+<!-- ── STATUS BANNER ── -->
+<div id="training-banner">
+  <div class="spinner" id="banner-spinner"></div>
+  <span id="banner-text">■ LOADING... TRAINING 6 ML MODELS ON 9,000+ CAREER PROFILES</span>
+</div>
+
+<!-- ── MAIN ── -->
+<main class="main">
+  <!-- ── MODE SELECTOR ── -->
+  <div class="card mode-card">
+    <div class="card-title">
+      <span class="section-icon">⚡</span>
+      PREDICTION MODE
+    </div>
+    <div class="mode-selector">
+      <div class="mode-option" id="mode-opt-ml">
+        <div class="mode-icon-big">🤖</div>
+        <div class="mode-label">ML ALGORITHMS</div>
+        <div class="mode-desc">6 trained models · instant results</div>
+      </div>
+      <label class="mode-toggle-wrap" title="Switch mode">
+        <input type="checkbox" id="mode-toggle"/>
+        <span class="mode-track">
+          <span class="mode-thumb"></span>
+        </span>
+      </label>
+      <div class="mode-option right" id="mode-opt-ai">
+        <div class="mode-icon-big">✨</div>
+        <div class="mode-label">AI ANALYSIS</div>
+        <div class="mode-desc">gpt-5.4-nano · deep insights</div>
+      </div>
+    </div>
+
+    <!-- API key section — visible only in AI mode -->
+    <div id="api-key-section" class="api-key-section" style="display:none">
+      <div class="api-key-inner">
+        <div class="field-group" style="flex:1">
+          <label class="field-label" for="api-key-input">// OPENAI API KEY</label>
+          <input type="password" id="api-key-input" placeholder="Leave blank to use stored key · or paste your own sk-…"/>
+          <span class="field-hint">» Key is sent to your own Flask server only — never exposed to third parties</span>
+        </div>
+        <div class="api-key-status" id="api-key-status">
+          <span class="key-dot"></span> KEY CONFIGURED
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="profile-saved-badge" class="profile-saved-badge"></div>
+
+  <form id="predict-form" autocomplete="off">
+
+    <!-- SECTION 1: PROFILE -->
+    <div class="card">
+      <div class="card-title">
+        <span class="section-icon">👤</span>
+        PLAYER PROFILE
+      </div>
+      <div class="form-grid">
+        <div class="field-group">
+          <label class="field-label" for="child-name">// CHILD'S NAME <span style="color:var(--text-dim)">(OPTIONAL)</span></label>
+          <input type="text" id="child-name" placeholder="ENTER NAME_"/>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="field-select">// FIELD OF INTEREST</label>
+          <select id="field-select">
+            <option value="">LOADING...</option>
+          </select>
+          <span class="field-hint">» PRIMARY ACADEMIC AREA</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: ACADEMIC -->
+    <div class="card yellow-card">
+      <div class="card-title">
+        <span class="section-icon">📊</span>
+        ACADEMIC STATS
+      </div>
+      <div class="form-grid">
+        <div class="field-group">
+          <label class="field-label" for="gpa">// GPA / ACADEMIC SCORE</label>
+          <input type="number" id="gpa" min="1.0" max="5.0" step="0.05" value="3.5" placeholder="1.0 – 5.0"/>
+          <span class="field-hint">» 1.0 = LOW  /  5.0 = PERFECT</span>
+        </div>
+        <div class="field-group">
+          <label class="field-label">// SPECIALISED COURSES TAKEN</label>
+          <div class="skill-row">
+            <div class="skill-header">
+              <span class="skill-name">NUMBER OF FIELD-SPECIFIC CLASSES</span>
+              <span class="skill-value-badge cyan-badge">3</span>
+            </div>
+            <input type="range" id="field-courses" min="0" max="9" value="3" class="cyan-range"/>
+            <div class="skill-labels"><span>0</span><span>3</span><span>6</span><span>9</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: ACTIVITIES -->
+    <div class="card green-card">
+      <div class="card-title">
+        <span class="section-icon">🏆</span>
+        ACTIVITIES &amp; XP
+      </div>
+
+      <div class="form-grid" style="margin-bottom:20px">
+        <div class="field-group">
+          <label class="field-label">// HOBBIES &amp; CLUBS</label>
+          <div class="skill-row">
+            <div class="skill-header">
+              <span class="skill-name">ACTIVE HOBBIES / CLUBS JOINED</span>
+              <span class="skill-value-badge">3</span>
+            </div>
+            <input type="range" id="extracurricular" min="0" max="9" value="3"/>
+            <div class="skill-labels"><span>NONE</span><span>A FEW</span><span>MANY</span><span>9+</span></div>
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">// PERSONAL PROJECTS</label>
+          <div class="skill-row">
+            <div class="skill-header">
+              <span class="skill-name">INDEPENDENT PROJECTS BUILT</span>
+              <span class="skill-value-badge">2</span>
+            </div>
+            <input type="range" id="projects" min="0" max="9" value="2"/>
+            <div class="skill-labels"><span>ZERO</span><span>2–3</span><span>5–6</span><span>9+</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group" style="margin-bottom:20px">
+        <label class="field-label">// WORKSHOPS / PROGRAMMES ATTENDED</label>
+        <div class="radio-group" id="internships-group">
+          <label class="radio-opt selected">
+            <input type="radio" name="internships" value="0" checked/> ► NONE
+          </label>
+          <label class="radio-opt">
+            <input type="radio" name="internships" value="1"/> ► 1–2 PROGRAMMES
+          </label>
+          <label class="radio-opt">
+            <input type="radio" name="internships" value="2"/> ► 3 OR MORE
+          </label>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="field-group">
+          <label class="field-label" style="margin-bottom:8px">// LEADERSHIP ROLE</label>
+          <label class="toggle-row">
+            <span class="toggle-label">HAS HELD A LEADERSHIP ROLE (CLASS REP, TEAM CAPTAIN, CLUB HEAD…)</span>
+            <span class="toggle">
+              <input type="checkbox" id="leadership"/>
+              <span class="toggle-track"></span>
+              <span class="toggle-thumb"></span>
+            </span>
+          </label>
+        </div>
+        <div class="field-group">
+          <label class="field-label" style="margin-bottom:8px">// RESEARCH / SCIENCE FAIR</label>
+          <label class="toggle-row">
+            <span class="toggle-label">HAS DONE RESEARCH, SCIENCE FAIR, OR INDEPENDENT STUDY</span>
+            <span class="toggle">
+              <input type="checkbox" id="research"/>
+              <span class="toggle-track"></span>
+              <span class="toggle-thumb"></span>
+            </span>
+          </label>
+        </div>
+        <div class="field-group">
+          <label class="field-label" style="margin-bottom:8px">// CERTIFICATIONS / AWARDS</label>
+          <label class="toggle-row">
+            <span class="toggle-label">HOLDS FORMAL CERTIFICATIONS, SCHOLARSHIPS, OR AWARD RECOGNITION</span>
+            <span class="toggle">
+              <input type="checkbox" id="certifications"/>
+              <span class="toggle-track"></span>
+              <span class="toggle-thumb"></span>
+            </span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 4: SKILLS -->
+    <div class="card pink-card">
+      <div class="card-title">
+        <span class="section-icon">💡</span>
+        SKILL LEVELS
+        <span style="font-family:var(--mono);font-size:0.65rem;font-weight:400;color:var(--text-dim);margin-left:auto;letter-spacing:1px">0 = NONE &nbsp;→&nbsp; 4 = EXPERT</span>
+      </div>
+      <div class="skill-sliders">
+
+        <div class="skill-row">
+          <div class="skill-header">
+            <span class="skill-name">💻 CODING &amp; TECHNOLOGY</span>
+            <span class="skill-value-badge">INTERMEDIATE</span>
+          </div>
+          <input type="range" id="coding" min="0" max="4" value="2" data-type="skill"/>
+          <div class="skill-labels"><span>NONE</span><span>BASIC</span><span>MID</span><span>ADV</span><span>EXPERT</span></div>
+        </div>
+
+        <div class="skill-row">
+          <div class="skill-header">
+            <span class="skill-name">🗣️ COMMUNICATION</span>
+            <span class="skill-value-badge">INTERMEDIATE</span>
+          </div>
+          <input type="range" id="communication" min="0" max="4" value="2" data-type="skill"/>
+          <div class="skill-labels"><span>NONE</span><span>BASIC</span><span>MID</span><span>ADV</span><span>EXPERT</span></div>
+        </div>
+
+        <div class="skill-row">
+          <div class="skill-header">
+            <span class="skill-name">🧩 PROBLEM SOLVING</span>
+            <span class="skill-value-badge">INTERMEDIATE</span>
+          </div>
+          <input type="range" id="problem-solving" min="0" max="4" value="2" data-type="skill"/>
+          <div class="skill-labels"><span>NONE</span><span>BASIC</span><span>MID</span><span>ADV</span><span>EXPERT</span></div>
+        </div>
+
+        <div class="skill-row">
+          <div class="skill-header">
+            <span class="skill-name">🤝 TEAMWORK</span>
+            <span class="skill-value-badge">INTERMEDIATE</span>
+          </div>
+          <input type="range" id="teamwork" min="0" max="4" value="2" data-type="skill"/>
+          <div class="skill-labels"><span>NONE</span><span>BASIC</span><span>MID</span><span>ADV</span><span>EXPERT</span></div>
+        </div>
+
+        <div class="skill-row">
+          <div class="skill-header">
+            <span class="skill-name">📈 ANALYTICAL THINKING</span>
+            <span class="skill-value-badge">INTERMEDIATE</span>
+          </div>
+          <input type="range" id="analytical" min="0" max="4" value="2" data-type="skill"/>
+          <div class="skill-labels"><span>NONE</span><span>BASIC</span><span>MID</span><span>ADV</span><span>EXPERT</span></div>
+        </div>
+
+        <div class="skill-row">
+          <div class="skill-header">
+            <span class="skill-name">📢 PRESENTATION</span>
+            <span class="skill-value-badge">INTERMEDIATE</span>
+          </div>
+          <input type="range" id="presentation" min="0" max="4" value="2" data-type="skill"/>
+          <div class="skill-labels"><span>NONE</span><span>BASIC</span><span>MID</span><span>ADV</span><span>EXPERT</span></div>
+        </div>
+
+        <div class="skill-row">
+          <div class="skill-header">
+            <span class="skill-name">🌐 NETWORKING &amp; SOCIAL</span>
+            <span class="skill-value-badge">INTERMEDIATE</span>
+          </div>
+          <input type="range" id="networking" min="0" max="4" value="2" data-type="skill"/>
+          <div class="skill-labels"><span>NONE</span><span>BASIC</span><span>MID</span><span>ADV</span><span>EXPERT</span></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SUBMIT -->
+    <div class="card purple-card">
+      <button type="submit" class="btn-predict" id="predict-btn" disabled>
+        <span class="btn-icon">🚀</span>
+        LAUNCH CAREER PREDICTION
+      </button>
+    </div>
+
+  </form>
+
+  <!-- ── RESULTS ── -->
+  <section id="results">
+
+    <div class="results-header">
+      ★ CAREER PATH UNLOCKED ★
+      <span class="blink" style="margin-left:8px">_</span>
+    </div>
+
+    <!-- #1 TOP PICK -->
+    <div class="top-pick-card">
+      <div class="top-pick-inner">
+        <div class="top-pick-icon" id="top-icon">🎯</div>
+        <div style="flex:1">
+          <div class="top-pick-rank">★ RANK #1 CAREER MATCH</div>
+          <div id="result-child-name" class="child-name-display"></div>
+          <div class="top-pick-title" id="top-title">—</div>
+          <div class="top-pick-desc" id="top-desc">—</div>
+        </div>
+        <div class="top-pick-badge">
+          <div class="conf-ring">
+            <span class="conf-val" id="top-conf">—</span>
+            <span class="conf-lbl">MATCH</span>
+          </div>
+        </div>
+      </div>
+      <div class="motivation-box">
+        <span class="motivation-icon">★</span>
+        <span id="motivation-msg"></span>
+      </div>
+    </div>
+
+    <!-- SKILL RADAR CHART -->
+    <div class="card radar-card" id="radar-card" style="display:none">
+      <div class="card-title">
+        <span class="section-icon">🕸️</span>
+        SKILL RADAR
+      </div>
+      <div class="radar-wrap">
+        <canvas id="radar-canvas"></canvas>
+      </div>
+    </div>
+
+    <!-- SKILL GAP PANEL -->
+    <div class="card skillgap-card" id="skillgap-card" style="display:none">
+      <div class="card-title">
+        <span class="section-icon">🎯</span>
+        SKILL GAP ANALYSIS
+        <span class="skillgap-target" id="skillgap-target"></span>
+      </div>
+      <div class="skillgap-intro" id="skillgap-intro"></div>
+      <div class="skillgap-list" id="skillgap-list"></div>
+    </div>
+
+    <!-- AI ANALYSIS BLOCK (shown in AI mode only) -->
+    <div id="ai-results-block" style="display:none">
+
+      <!-- AI Deep Analysis -->
+      <div class="card ai-analysis-card">
+        <div class="card-title">
+          <span class="section-icon">✨</span>
+          AI DEEP ANALYSIS
+          <span class="ai-badge">gpt-5.4-nano</span>
+        </div>
+        <div class="ai-analysis-text" id="ai-analysis-text"></div>
+        <div class="ai-strengths-row">
+          <span class="ai-strengths-label">KEY STRENGTHS</span>
+          <div class="ai-strengths" id="ai-strengths"></div>
+        </div>
+        <div class="ai-advice-box">
+          <div class="ai-advice-icon">💡</div>
+          <div>
+            <div class="ai-advice-title">DEVELOPMENT ADVICE</div>
+            <div id="ai-advice-text"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Top 3 with reasons -->
+      <div class="card">
+        <div class="card-title">
+          <span class="section-icon">🎯</span>
+          AI TOP 3 CAREER RECOMMENDATIONS
+        </div>
+        <div class="ai-top3" id="ai-top3"></div>
+      </div>
+
+    </div>
+
+    <!-- AI FOLLOW-UP Q&A (AI mode only) -->
+    <div id="followup-section" style="display:none">
+      <div class="card followup-card">
+        <div class="card-title">
+          <span class="section-icon">💬</span>
+          ASK A FOLLOW-UP
+          <span class="ai-badge">gpt-5.4-nano</span>
+        </div>
+        <div class="followup-chat" id="followup-chat"></div>
+        <div class="followup-input-row">
+          <input type="text" id="followup-input" placeholder="e.g. What subjects should she focus on?"/>
+          <button type="button" class="btn-followup" id="followup-btn">▶ SEND</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOP 3 (ML mode) -->
+    <div id="ml-results-block">
+    <div class="card">
+      <div class="card-title">
+        <span class="section-icon">🎯</span>
+        TOP 3 CAREER PATHS
+      </div>
+      <div class="career-bars" id="career-bars"></div>
+    </div>
+
+    <!-- WHAT-IF SIMULATOR -->
+    <div class="card whatif-card">
+      <div class="card-title">
+        <span class="section-icon">🎚️</span>
+        WHAT-IF SIMULATOR
+        <span class="whatif-hint" id="whatif-hint">Drag a skill to see the ranking shift live</span>
+      </div>
+      <div class="whatif-grid" id="whatif-grid"></div>
+      <button type="button" class="btn-whatif-reset" id="whatif-reset">↺ RESET TO ACTUAL</button>
+    </div>
+
+    <!-- PER MODEL -->
+    <div class="card purple-card">
+      <div class="card-title">
+        <span class="section-icon">🤖</span>
+        HOW EACH ALGORITHM VOTED
+      </div>
+      <div class="model-grid" id="model-grid"></div>
+    </div>
+
+    <!-- ACCURACY -->
+    <div class="card yellow-card">
+      <div class="card-title">
+        <span class="section-icon">📊</span>
+        MODEL ACCURACY SCORES
+        <span style="font-family:var(--mono);font-size:0.6rem;font-weight:400;color:var(--text-dim);margin-left:auto">20% TEST SET · 1,800 PROFILES</span>
+      </div>
+      <div class="accuracy-chart" id="accuracy-chart"></div>
+    </div>
+
+    <!-- ALL 31 -->
+    <div class="card green-card">
+      <div class="card-title">
+        <span class="section-icon">🌐</span>
+        FULL CAREER RADAR — ALL 31 CATEGORIES
+        <span style="font-family:var(--mono);font-size:0.6rem;font-weight:400;color:var(--text-dim);margin-left:auto">HIGHLIGHTED = TOP 3</span>
+      </div>
+      <div class="all-cats" id="all-categories"></div>
+    </div>
+    </div><!-- end #ml-results-block -->
+
+    <div class="results-actions">
+      <button class="btn-download" id="download-btn">⬇ DOWNLOAD PDF REPORT</button>
+      <button class="btn-reset" id="reset-btn">◄ PREDICT ANOTHER PLAYER</button>
+    </div>
+
+  </section>
+</main>
+
+<footer>
+  <strong>CASPA</strong> &nbsp;■&nbsp; CAREER ASSISTED PATH APP &nbsp;■&nbsp;
+  9,000 TRAINING PROFILES &nbsp;■&nbsp;
+  LR · ADABOOST · DT · GNB · RF · SVM &nbsp;■&nbsp;
+  PYTHON + SCIKIT-LEARN
+</footer>
+
+<script src="/static/js/main.js"></script>
+</body>
+</html>
