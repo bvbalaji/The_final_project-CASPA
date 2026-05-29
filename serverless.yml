@@ -1,0 +1,16 @@
+service: flask-on-netlify
+
+provider:
+  name: netlify
+  runtime: python3.14
+
+plugins:
+  - serverless-wsgi
+  - serverless-netlify
+
+functions:
+  app:
+    handler: wsgi.handler
+    events:
+      - http: ANY /
+      - http: ANY {proxy+}
