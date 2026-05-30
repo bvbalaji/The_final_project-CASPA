@@ -1211,8 +1211,9 @@ form .card:nth-child(5)       { animation: cardIn 0.42s cubic-bezier(0.22,1,0.36
 }
 .btn-download:disabled { opacity: 0.5; cursor: progress; }
 
-/* Hide interactive-only controls while capturing PDF */
+/* Remove interactive-only controls while capturing PDF (display:none so they
+   leave no blank gaps in the rendered image) */
 .pdf-capturing .results-actions,
 .pdf-capturing .whatif-card,
-.pdf-capturing .followup-input-row { visibility: hidden; }
+.pdf-capturing #followup-section { display: none !important; }
 

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>CASPA — Exhibition Poster</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;800;900&family=Russo+One&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  /* A4 landscape */
+  @page { size: A4 landscape; margin: 0; }
+
+  html, body { background: #4a4a4a; }
+
+  .sheet {
+    width: 297mm;
+    height: 210mm;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 30% 0%, #5B2A9E 0%, transparent 55%),
+      linear-gradient(160deg, #2A1259 0%, #1A0A3E 45%, #0D0428 100%);
+    color: #fff;
+    font-family: 'Orbitron', sans-serif;
+    display: flex;
+    padding: 11mm 13mm;
+    gap: 11mm;
+  }
+
+  /* retro grid backdrop */
+  .sheet::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,245,255,0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,245,255,0.08) 1px, transparent 1px);
+    background-size: 14mm 14mm;
+    -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 60%, transparent);
+            mask-image: radial-gradient(circle at 50% 50%, #000 60%, transparent);
+    pointer-events: none;
+  }
+  .sheet > * { position: relative; z-index: 1; }
+
+  /* ════ LEFT COLUMN — brand + name ════ */
+  .left {
+    flex: 1.05;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: space-between;
+    text-align: center;
+  }
+
+  .brand { width: 100%; }
+  .brand .rocket { font-size: 22mm; line-height: 1; filter: drop-shadow(0 0 10px rgba(255,45,120,0.6)); }
+  .title {
+    font-weight: 900;
+    font-size: 40mm;
+    line-height: 0.95;
+    letter-spacing: 1mm;
+    padding: 0 2mm;
+    background: linear-gradient(180deg, #FFE100 0%, #FF8A00 55%, #FF2D78 100%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 3px 0 rgba(0,0,0,0.35));
+  }
+  .expand {
+    font-family: 'Russo One', sans-serif;
+    font-size: 5.6mm;
+    letter-spacing: 0.8mm;
+    color: #00F5FF;
+    text-shadow: 0 0 10px rgba(0,245,255,0.6);
+    margin-top: 2.5mm;
+  }
+  .expand b { color: #FFE100; }
+
+  /* NAME showcase */
+  .namecard {
+    width: 100%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    border: 1.5mm solid #FFE100;
+    border-radius: 5mm;
+    background: linear-gradient(135deg, rgba(106,27,154,0.5), rgba(216,27,96,0.35));
+    box-shadow: 0 0 18px rgba(255,225,0,0.4), inset 0 0 30px rgba(255,45,120,0.15);
+    padding: 6mm 4mm;
+  }
+  .namecard .by {
+    font-family:'Russo One',sans-serif;
+    font-size: 5mm; letter-spacing: 2.5mm;
+    color: #FFE100; text-shadow: 0 0 10px rgba(255,225,0,0.6);
+    margin-bottom: 3mm;
+  }
+  .name {
+    font-weight: 900;
+    font-size: 20mm;
+    line-height: 1;
+    letter-spacing: 0.5mm;
+    padding: 0 2mm;
+    background: linear-gradient(180deg,#fff 0%, #FFD6F0 50%, #00F5FF 120%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+    filter: drop-shadow(0 0 14px rgba(0,245,255,0.45));
+  }
+  .creator {
+    font-family:'Russo One',sans-serif;
+    font-size: 4.4mm; letter-spacing: 0.8mm;
+    color:#EAE2FF; margin-top: 4mm;
+  }
+
+  /* ════ RIGHT COLUMN — pitch + steps + stats ════ */
+  .right {
+    flex: 1;
+    display: flex; flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .tagline {
+    text-align: center;
+    font-family: 'Russo One', sans-serif;
+    font-size: 7.6mm;
+    line-height: 1.3;
+    color: #fff;
+  }
+  .tagline .hl { color: #39FF14; text-shadow: 0 0 12px rgba(57,255,20,0.5); }
+
+  .steps { display: flex; gap: 4mm; }
+  .step {
+    flex: 1;
+    border: 1.1mm solid #00F5FF;
+    border-radius: 4mm;
+    background: rgba(0,245,255,0.07);
+    box-shadow: 0 0 8px rgba(0,245,255,0.3), inset 0 0 14px rgba(0,245,255,0.05);
+    padding: 4.5mm 2.5mm;
+    text-align: center;
+  }
+  .step.s2 { border-color: #FF2D78; background: rgba(255,45,120,0.07); box-shadow: 0 0 8px rgba(255,45,120,0.3), inset 0 0 14px rgba(255,45,120,0.05); }
+  .step.s3 { border-color: #FFE100; background: rgba(255,225,0,0.07); box-shadow: 0 0 8px rgba(255,225,0,0.3), inset 0 0 14px rgba(255,225,0,0.05); }
+  .step .num { font-weight: 900; font-size: 8mm; line-height: 1; color: #00F5FF; }
+  .step.s2 .num { color: #FF2D78; }
+  .step.s3 .num { color: #FFE100; }
+  .step .ico { font-size: 11mm; line-height: 1; margin: 2mm 0; }
+  .step .txt { font-family: 'Russo One', sans-serif; font-size: 3.9mm; line-height: 1.3; color: #EAE2FF; }
+
+  .stats {
+    display: flex; justify-content: space-around;
+    border-block: 0.8mm solid rgba(255,255,255,0.18);
+    padding: 5mm 0;
+  }
+  .stat { text-align: center; }
+  .stat .big {
+    font-weight: 900; font-size: 14mm; line-height: 1;
+    background: linear-gradient(180deg,#fff,#9AE9FF);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  }
+  .stat .lbl { font-family:'Russo One',sans-serif; font-size: 3.6mm; letter-spacing:0.4mm; color:#B9A8E8; margin-top:1.5mm; }
+
+  .footer {
+    text-align: center;
+    font-family:'Russo One',sans-serif;
+    font-size: 4.6mm; letter-spacing: 0.8mm;
+    color:#8A7CB8;
+  }
+  .footer .arrow { color:#FF2D78; }
+
+  /* screen helper — JS scales the sheet to fit the window (see script) */
+  @media screen {
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+    .stage {
+      position: absolute;
+      top: 0; left: 0;
+      transform-origin: top left;   /* deterministic: JS positions + scales */
+    }
+    .sheet { box-shadow: 0 0 40px rgba(0,0,0,0.6); }
+  }
+
+  /* print: no scaling, exact A4 */
+  @media print {
+    html, body { background: #fff; overflow: visible; }
+    .stage { position: static; transform: none !important; }
+  }
+</style>
+</head>
+<body>
+  <div class="stage">
+  <div class="sheet">
+
+    <!-- LEFT -->
+    <div class="left">
+      <div class="brand">
+        <div class="rocket">🚀</div>
+        <div class="title">CASPA</div>
+        <div class="expand"><b>C</b>areer <b>AS</b>sisted <b>P</b>ath <b>A</b>pp</div>
+      </div>
+
+      <div class="namecard">
+        <div class="by">CREATED BY</div>
+        <div class="name">LOKPRIYANTH</div>
+        <div class="creator">Developer &amp; Designer of CASPA</div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right">
+      <div class="tagline">
+        Predicting a child's <span class="hl">future career</span><br>
+        using <span class="hl">Machine Learning</span> &amp; <span class="hl">AI</span>
+      </div>
+
+      <div class="steps">
+        <div class="step s1">
+          <div class="num">1</div>
+          <div class="ico">📝</div>
+          <div class="txt">ENTER skills,<br>grades &amp; hobbies</div>
+        </div>
+        <div class="step s2">
+          <div class="num">2</div>
+          <div class="ico">🧠</div>
+          <div class="txt">LEARN from<br>9,000 profiles</div>
+        </div>
+        <div class="step s3">
+          <div class="num">3</div>
+          <div class="ico">🎯</div>
+          <div class="txt">PREDICT the<br>career match</div>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="big">6</div><div class="lbl">ALGORITHMS</div></div>
+        <div class="stat"><div class="big">9,000</div><div class="lbl">PROFILES</div></div>
+        <div class="stat"><div class="big">31</div><div class="lbl">CAREERS</div></div>
+        <div class="stat"><div class="big">AI</div><div class="lbl">POWERED</div></div>
+      </div>
+
+      <div class="footer">
+        <span class="arrow">▶</span> SCIENCE EXHIBITION PROJECT <span class="arrow">◀</span>
+      </div>
+    </div>
+
+  </div>
+  </div><!-- /.stage -->
+
+  <script>
+    // Scale the A4 sheet down so the whole poster fits inside the browser window.
+    // Print is unaffected (the @media print rule removes the transform).
+    function fitPoster() {
+      var stage = document.querySelector('.stage');
+      var sheet = document.querySelector('.sheet');
+      if (!stage || !sheet) return;
+      stage.style.transform = 'none';            // measure at natural size
+      var w = sheet.offsetWidth;
+      var h = sheet.offsetHeight;
+      var pad = 24;                              // breathing room
+      var scale = Math.min(
+        (window.innerWidth  - pad) / w,
+        (window.innerHeight - pad) / h,
+        1                                        // never upscale beyond 100%
+      );
+      stage.style.transform = 'scale(' + scale + ')';
+    }
+    window.addEventListener('load', fitPoster);
+    window.addEventListener('resize', fitPoster);
+    fitPoster();
+  </script>
+</body>
+</html>
