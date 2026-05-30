@@ -2,10 +2,20 @@ import os
 import json
 import threading
 from flask import Flask, render_template, jsonify, request
+
+try:
+    from dotenv import load_dotenv
+except ImportError:  # dotenv is optional — the app still runs without it
+    def load_dotenv(*args, **kwargs):
+        return False
+
 from ml.predictor import CaspaPredictor, USER_CAREERS
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = os.path.join(BASE_DIR, 'data', 'career_path_in_all_field.csv')
+
+# Load OPENAI_API_KEY (and any other vars) from this folder's .env file.
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 app = Flask(__name__)
 predictor = CaspaPredictor(DATA_PATH)
