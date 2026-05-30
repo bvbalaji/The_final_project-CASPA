@@ -5,7 +5,7 @@ from flask import Flask, render_template, jsonify, request
 
 try:
     from dotenv import load_dotenv
-except ImportError:  # dotenv is optional — the app still runs without it
+except ImportError:
     def load_dotenv(*args, **kwargs):
         return False
 
